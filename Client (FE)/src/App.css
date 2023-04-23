@@ -1,0 +1,16 @@
+.editable-row .ant-form-item-explain {
+  position: absolute;
+  top: 100%;
+  font-size: 12px;
+}
+
+li.ant-menu-item:nth-child(2)  {
+  margin-left: auto;
+}
+
+.loginContainer {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}

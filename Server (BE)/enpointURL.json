@@ -1,0 +1,13 @@
+{
+    "getUserAudioCollection": "audio/getUserAudioCollections",
+    "deleteAudioTrack": "audio/deleteAudio",
+    "updateUserAudioTrack": "audio/updateAudioCollections",
+    "initAudioUpload": "audio/upload/init",
+    "uploadAudioChunks": "audio/upload",
+    "authenticateUserLogin": "user/authenticateLogin",
+    "getAllUserList": "user/getAllUsers",
+    "addNewUser": "user/addUser",
+    "deleteUser": "user/deleteUser",
+    "updateUser": "user/updateUser",
+    "getCurrentUser": "user/getCurrentUsername"
+}
