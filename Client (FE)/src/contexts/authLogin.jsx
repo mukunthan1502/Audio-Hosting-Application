@@ -1,8 +1,8 @@
 import React, { createContext, useState } from "react";
-import { authenticateUserLogin } from "../backend-services/userService";
+import { authenticateUserLogin } from "../backendServices/userService";
 import { useEffect } from "react";
 import { message } from "antd";
-import { getCurrentUser } from "../backend-services/userService";
+import { getCurrentUser } from "../backendServices/userService";
 
 // @ts-ignore
 export const AuthLogin = createContext();

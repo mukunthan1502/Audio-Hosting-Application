@@ -1,7 +1,7 @@
 version: '3'
 services:
   fe-app:
-    image: mukunthan1502/mukun-repo:audio-host-app-fe2
+    image: mukunthan1502/mukun-repo:audio-host-app-client-fe
     environment:
       PORT: 3000
       REACT_APP_PROXY_API:  http://localhost:5555
@@ -9,7 +9,7 @@ services:
       - 3000:3000
     restart: on-failure
   be-app:
-    image: mukunthan1502/mukun-repo:audio-host-app-server-be2
+    image: mukunthan1502/mukun-repo:audio-host-app-server-be
     environment:
       PORT: 5555
       MONGO_DB_USERNAME: admin
@@ -28,7 +28,7 @@ services:
       # - MONGO_INITDB_DATABASE= root-db
     volumes:
       - mongo-data:/data/db
-      - ./Database/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      # - ./Database/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     restart: unless-stopped
   mongo-express:
     image: mongo-express
