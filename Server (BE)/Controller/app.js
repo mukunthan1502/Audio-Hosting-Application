@@ -201,7 +201,7 @@ app.delete(`/${deleteUser}/:userID`, verifyToken, validateAdminUserRole, (req, r
     })();
 });
 
-app.put(`/${updateUser}/:userID`, verifyToken, validateAdminUserRole, userModel.checkUsernameAlrExist, (req, res) => {
+app.put(`/${updateUser}/:userID`, verifyToken, validateAdminUserRole, (req, res) => {
     const { userID } = req.params;
     const { user } = req.body;
     console.log(updateUser, { userID, user });

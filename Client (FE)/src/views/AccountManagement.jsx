@@ -157,13 +157,14 @@ const AccountManagementTable = ({ originData, onDelete, updateUserData }) => {
 
     const edit = (record) => {
         console.log("edit:::record", record);
+        const password = originData.find((row) => row.userID === record.userID)?.password ?? "";
         form.setFieldsValue({
             username: "",
             // password: "",
             userID: "",
             role: "",
             ...record,
-            password: "",
+            password,
         });
         setEditingKey(record.key);
     };
@@ -181,13 +182,13 @@ const AccountManagementTable = ({ originData, onDelete, updateUserData }) => {
             const row = await form.validateFields();
             row.role = roleLookup[row.role];
 
-            // const usernameAlrExist = originData
-            //     .filter((record) => record.key !== key)
-            //     .some((record) => record.username === row.username);
-            // if (usernameAlrExist) {
-            //     message.error("Username already exist, try another username");
-            //     return;
-            // }
+            const usernameAlrExist = originData
+                .filter((record) => record.key !== key)
+                .some((record) => record.username === row.username);
+            if (usernameAlrExist) {
+                message.error("Username already exist, try another username");
+                return;
+            }
 
             const originalRow = originData.find((record) => record.key === key);
             const updatedUserDetails = { ...originalRow, ...row };
@@ -253,14 +254,7 @@ const AccountManagementTable = ({ originData, onDelete, updateUserData }) => {
                 const editable = isEditing(record);
                 return editable ? (
                     <Space size="middle">
-                        <Button
-                            onClick={() => save(record.key)}
-                            style={{
-                                marginRight: 8,
-                                backgroundColor: "rgba(0, 0, 255, 0.5)",
-                                color: "white",
-                            }}
-                        >
+                        <Button type="primary" onClick={() => save(record.key)}>
                             Save
                         </Button>
                         <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
