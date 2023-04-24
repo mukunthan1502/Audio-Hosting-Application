@@ -88,7 +88,10 @@ export const NewAccountComp = ({ selfSignUp = false, addAccount }) => {
                 visibilityToggle
             />
             <Switch
-                disabled={selfSignUp}
+                //force it to be false to that it is always enabled
+                // this is done so that this application can be tested without init database source with admin users populated
+                // admin and non-admin account can be created, hence application can be run with just compose file
+                disabled={selfSignUp && false}
                 checked={role === "admin"}
                 onChange={(checked) => setRole(checked ? "admin" : "user")}
                 checkedChildren="Admin"

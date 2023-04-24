@@ -2,7 +2,7 @@ db = db.getSiblingDB("audio-host");
 db.createUser({
     user: "admin",
     pwd: "password",
-    roles: [{ role: "readWrite", db: "api_prod_db" }],
+    roles: [{ role: "readWrite", db: "audio-host" }],
 });
 db.createCollection("users");
 

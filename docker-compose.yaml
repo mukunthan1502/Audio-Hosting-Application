@@ -1,13 +1,14 @@
+name: iamsleepy
 version: '3'
 services:
-  fe-app:
-    image: mukunthan1502/mukun-repo:audio-host-app-client-fe
-    environment:
-      PORT: 3000
-      REACT_APP_PROXY_API:  http://localhost:5555
-    ports:
-      - 3000:3000
-    restart: on-failure
+#   fe-app:
+#     image: mukunthan1502/mukun-repo:audio-host-app-client-fe
+#     environment:
+#       PORT: 3000
+#       REACT_APP_PROXY_API:  http://localhost:5555
+#     ports:
+#       - 3000:3000
+#     restart: on-failure
   be-app:
     image: mukunthan1502/mukun-repo:audio-host-app-server-be
     environment:
