@@ -1,5 +1,5 @@
 import { Form, InputNumber, Popconfirm, Table, Input, Button, Space, message, Switch } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getAllUsersList, addNewUser, deleteUser, updateUsers } from "../backendServices/userService";
 import { CustomCard } from "../components/styledComponents";
 import { v4 as uuidv4 } from "uuid";
@@ -156,10 +156,11 @@ const AccountManagementTable = ({ originData, onDelete, updateUserData }) => {
         console.log("edit:::record", record);
         form.setFieldsValue({
             username: "",
-            password: "",
+            // password: "",
             userID: "",
             role: "",
             ...record,
+            password: "",
         });
         setEditingKey(record.key);
     };
@@ -292,6 +293,11 @@ const AccountManagementTable = ({ originData, onDelete, updateUserData }) => {
             }),
         };
     });
+
+    const renderedData = useMemo(() => {
+        return originData.map((row) => ({ ...row, password: "**********" }));
+    }, [originData]);
+
     return (
         <Form form={form} component={false}>
             <Table
@@ -301,7 +307,7 @@ const AccountManagementTable = ({ originData, onDelete, updateUserData }) => {
                     },
                 }}
                 bordered
-                dataSource={originData}
+                dataSource={renderedData}
                 columns={mergedColumns}
                 rowClassName="editable-row"
                 pagination={{
