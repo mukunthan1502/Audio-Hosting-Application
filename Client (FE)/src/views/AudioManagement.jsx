@@ -15,7 +15,17 @@ const audioProps = {
         if (!isAudio) {
             message.error(`${file.name} is not a audio file`);
         }
-        return isAudio || Upload.LIST_IGNORE;
+        /* to remove this limit when change media storage in mongo to use  GridFS
+        https://www.mongodb.com/docs/manual/core/gridfs/
+        Current BSON Document has size limit of 16MB
+        */
+        const belowUploadSizeLimit = file.size / 1024 / 1024 < 11;
+
+        if (!belowUploadSizeLimit) {
+            message.error("File must be smaller than 11MB!");
+        }
+
+        return (isAudio || Upload.LIST_IGNORE) && belowUploadSizeLimit;
     },
 };
 

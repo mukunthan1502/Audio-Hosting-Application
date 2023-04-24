@@ -1,0 +1,33 @@
+Start_Stop App folder can be accession using the following url https://drive.google.com/drive/folders/1QyRqgy1P67rrYlcZGGGFvzsdDE7Up1Mh?usp=share_link
+Start_Stop_App folder contains the following
+1. docker-compose.yml
+2. Database/mongo-init.js --> required to seed data for the db
+
+To START APP and Containers 
+To start application, cmd into the Start_Stop_App folder folder as docker-compose.yaml and type docker compose -f docker-compose.yaml up
+Client application is accessable on localhost port 3000, http://localhost:3000
+database ui available on localhost port 8080, http://localhost:3000
+
+To STOP APP and Containers
+To stop application, cmd into the Start_Stop_App folder folder as docker-compose.yaml and type docker compose -f docker-compose.yaml down
+
+
+Instead of creating new users at the login page, the following init data can be used to login provided Database/mongo-init.js is present relative to
+the docker-compose.yaml.
+
+Init Data:
+username: Super_Admin, password: 1Password, role: admin
+username: User, password: 1Password, role: user
+
+
+The web frontend is accessible on http://localhost:3000
+The database UI interface is accessible on http://localhost:8080
+
+In the event the mongo-init.js is not loaded, initial user can be created via localhost:8080 mongo express interface or by using the Create User link on login page
+
+
+More details information in the Instruction_API.pdf attached (Section 3 and 4)
+
+
+The entire source code directory can be cloned from the following github repo https://github.com/mukunthan1502/Audio-Hosting-Application.git/
+
