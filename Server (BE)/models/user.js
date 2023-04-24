@@ -84,4 +84,35 @@ module.exports.userModel = {
         const numOfAdmins = await this.getNumberOfAdminUsers();
         return numOfAdmins >= 2;
     },
+
+    /* ==================================  MIDDLEWARE ============================================ */
+    /* check if username  already exist, return error status if username already exist, move
+    to next middleware if the username does not exist (not used before) */
+    checkUsernameAlrExist: async (req, res, next) => {
+        // empty form (not data)
+        if (!req.body.newUser && req.body.updatedUserDetails) {
+            res.status(412).send({ status: "fail", statusMsg: `No FormData Received` }).end();
+            return;
+        }
+
+        console.log("checkUsernameAlrExist::req.body", req.body);
+
+        const { user } = req.body;
+        const username = user.username;
+        let usernameAlrExist = true;
+        try {
+            const db = await dbo.connectToServer("audio-host");
+            const user = await db.collection("users").findOne({ username }, { projection: { _id: 0 } });
+            usernameAlrExist = !(user === null);
+        } catch (err) {}
+
+        console.log("checkUsernameAlrExist::usernameAlrExist", usernameAlrExist);
+
+        usernameAlrExist
+            ? res
+                  .status(409)
+                  .send({ status: "fail", statusMsg: `${username} username is already taken. Try another username` })
+                  .end()
+            : next();
+    },
 };

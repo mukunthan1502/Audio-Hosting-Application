@@ -22,6 +22,7 @@ export const BackendEndpointURL = {
     deleteUser: "user/deleteUser",
     updateUser: "user/updateUser",
     getCurrentUser: "user/getCurrentUsername",
+    signUpNewUser: "user/signUpNewUser",
 };
 
 export const constructBeEndpoint = (...params) => {

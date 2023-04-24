@@ -9,5 +9,6 @@
     "addNewUser": "user/addUser",
     "deleteUser": "user/deleteUser",
     "updateUser": "user/updateUser",
-    "getCurrentUser": "user/getCurrentUsername"
+    "getCurrentUser": "user/getCurrentUsername",
+    "signUpNewUser": "user/signUpNewUser"
 }

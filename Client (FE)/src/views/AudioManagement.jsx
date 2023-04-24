@@ -2,8 +2,8 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Button, Input, Upload } from "antd";
 import { useEffect, useState, memo } from "react";
 import { Space, Table, message } from "antd";
-import { CustomCard } from "../components/styledComponents";
 import { getUserAudioCollections, deleteAudioTrack, handleFileUpload } from "../backendServices/audioService";
+import { CustomVerticalSpace, CustomModalWithButtonCom } from "../components/styledComponents";
 
 const audioProps = {
     name: "file",
@@ -40,6 +40,7 @@ const b64toBlob = (b64Data, contentType = "", sliceSize = 512) => {
 export const AudioManagement = (props) => {
     const [audioCollection, setAudioCollection] = useState([]);
     const [loadingStatus, setLoadingStatus] = useState(true);
+    const [showUpload, setShowUpload] = useState(false);
 
     const prepareDataAsync = (eachAudio) => {
         return new Promise((resolve, reject) => {
@@ -83,7 +84,10 @@ export const AudioManagement = (props) => {
             });
     }, []);
 
-    const addToCollection = (newRecord) => setAudioCollection((prev) => [...prev, newRecord]);
+    const addToCollection = (newRecord) => {
+        setAudioCollection((prev) => [...prev, newRecord]);
+        setShowUpload(false);
+    };
 
     const onDeleteRecord = (fileToBeDeleted) => {
         deleteAudioTrack({ key: fileToBeDeleted.key });
@@ -94,8 +98,15 @@ export const AudioManagement = (props) => {
     return (
         <>
             <h1>Audio Manangement Page</h1>
+            <CustomModalWithButtonCom
+                state={showUpload}
+                stateSetter={setShowUpload}
+                title={"Add Audio Track"}
+                btnText="Add Audio"
+            >
+                <AudioFileUploader onUpdateCollection={addToCollection} />
+            </CustomModalWithButtonCom>
             <AudioDisplayTable loading={loadingStatus} audioCollection={audioCollection} onDelete={onDeleteRecord} />
-            <AudioFileUploader onUpdateCollection={addToCollection} />
         </>
     );
 };
@@ -148,32 +159,33 @@ const AudioFileUploader = ({ onUpdateCollection }) => {
     };
 
     return (
-        <CustomCard title="Upload Audio">
-            <Space direction="vertical">
-                <Input
-                    value={audioCategory}
-                    onChange={(e) => setAudioCategory(e.target.value)}
-                    placeholder="Audio Category"
-                />
+        // <CustomCard title="Upload Audio">
+        <CustomVerticalSpace>
+            <Input
+                value={audioCategory}
+                onChange={(e) => setAudioCategory(e.target.value)}
+                placeholder="Audio Category"
+            />
 
-                <Input.TextArea
-                    value={audioDescription}
-                    onChange={(e) => setAudioDescription(e.target.value)}
-                    placeholder="Audio Description"
-                />
+            <Input.TextArea
+                value={audioDescription}
+                onChange={(e) => setAudioDescription(e.target.value)}
+                placeholder="Audio Description"
+            />
 
-                <Upload {...audioProps} onChange={uploadFile} maxCount={1} fileList={fileList} accept="audio/mpeg">
-                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                </Upload>
+            <Upload {...audioProps} onChange={uploadFile} maxCount={1} fileList={fileList} accept="audio/mpeg">
+                <Button icon={<UploadOutlined />}>Click to Upload</Button>
+            </Upload>
 
-                <Button
-                    disabled={!(audioDescription.length && audioCategory.length && audio)}
-                    onClick={addToCollection}
-                >
-                    Add To Collection
-                </Button>
-            </Space>
-        </CustomCard>
+            <Button
+                type="primary"
+                disabled={!(audioDescription.length && audioCategory.length && audio)}
+                onClick={addToCollection}
+            >
+                Add To Collection
+            </Button>
+        </CustomVerticalSpace>
+        // </CustomCard>
     );
 };
 

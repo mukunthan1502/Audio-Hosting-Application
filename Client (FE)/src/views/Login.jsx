@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router";
 import { Form, Checkbox, Input, Button } from "antd";
-// import { authenticateUserLogin } from "../dataHandles/userService";
 import { LoginContainer, LoginTextFieldContainer } from "../components/styledComponents";
 import { routerPath } from "../common/config";
 import { AuthLogin } from "../contexts/authLogin";
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import { NewAccountComp } from "./AccountManagement";
+import { CustomModalWithLinkCom } from "../components/styledComponents";
 
 const loginFormProps = {
     name: "basic",
@@ -17,6 +18,7 @@ const loginFormProps = {
 };
 
 export const LoginPage = (props) => {
+    const [showSignUp, setShowSignUp] = useState(false);
     const { authenicateUserLogin } = useContext(AuthLogin);
     const navigate = useNavigate();
     const onFinish = async (values) => {
@@ -24,50 +26,53 @@ export const LoginPage = (props) => {
         if (await authenicateUserLogin(values.username, values.password)) {
             navigate(routerPath.account);
         }
-        // const loginStatus = await authenticateUserLogin(values);
-        // if (!loginStatus.authenticateStatus) {
-        //     message.error(loginStatus.message);
-        //     return;
-        // }
-        // message.success(loginStatus.message);
-        // sessionStorage.setItem("authToken", loginStatus.jwt);
-        // navigate(routerPath.account);
     };
 
     return (
-        <LoginContainer>
-            <h1>Login Page</h1>
-            <Form {...loginFormProps} onFinish={onFinish}>
-                <LoginTextFieldContainer name="username">
-                    <Input />
-                </LoginTextFieldContainer>
+        <>
+            <LoginContainer>
+                <h1>Login Page</h1>
+                <Form {...loginFormProps} onFinish={onFinish}>
+                    <LoginTextFieldContainer name="username">
+                        <Input />
+                    </LoginTextFieldContainer>
 
-                <LoginTextFieldContainer name="password">
-                    <Input.Password />
-                </LoginTextFieldContainer>
+                    <LoginTextFieldContainer name="password">
+                        <Input.Password />
+                    </LoginTextFieldContainer>
 
-                <Form.Item
-                    name="remember"
-                    valuePropName="checked"
-                    wrapperCol={{
-                        offset: 8,
-                        span: 16,
-                    }}
-                >
-                    <Checkbox>Remember me</Checkbox>
-                </Form.Item>
+                    <Form.Item
+                        name="remember"
+                        valuePropName="checked"
+                        wrapperCol={{
+                            offset: 8,
+                            span: 16,
+                        }}
+                    >
+                        <Checkbox>Remember me</Checkbox>
+                    </Form.Item>
 
-                <Form.Item
-                    wrapperCol={{
-                        offset: 8,
-                        span: 16,
-                    }}
-                >
-                    <Button type="primary" htmlType="submit">
-                        Submit
-                    </Button>
-                </Form.Item>
-            </Form>
-        </LoginContainer>
+                    <Form.Item
+                        wrapperCol={{
+                            offset: 8,
+                            span: 16,
+                        }}
+                    >
+                        <Button type="primary" htmlType="submit">
+                            Submit
+                        </Button>
+                    </Form.Item>
+
+                    <CustomModalWithLinkCom
+                        state={showSignUp}
+                        stateSetter={setShowSignUp}
+                        title={"Sign Up For Account With Us"}
+                        linkText="Create Account"
+                    >
+                        <NewAccountComp selfSignUp={true} addAccount={() => setShowSignUp(false)} />
+                    </CustomModalWithLinkCom>
+                </Form>
+            </LoginContainer>
+        </>
     );
 };

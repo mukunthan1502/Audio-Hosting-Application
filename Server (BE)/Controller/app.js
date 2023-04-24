@@ -19,6 +19,7 @@ const {
     deleteUser,
     updateUser,
     getCurrentUser,
+    signUpNewUser,
 } = urlEndpints;
 // handle JWT token creation
 const { verifyToken, validateAdminUserRole } = authenticationToken;
@@ -138,13 +139,30 @@ app.get(`/${getAllUserList}`, verifyToken, (req, res) => {
     })();
 });
 
-app.post(`/${addNewUser}`, verifyToken, validateAdminUserRole, (req, res) => {
-    const { newUser } = req.body;
-    console.log(addNewUser, { newUser });
+app.post(`/${addNewUser}`, verifyToken, validateAdminUserRole, userModel.checkUsernameAlrExist, (req, res) => {
+    const { user } = req.body;
+    console.log(addNewUser, { user });
     (async () => {
         try {
             const db = await dbo.connectToServer("audio-host");
-            await db.collection("users").insertOne(newUser);
+            await db.collection("users").insertOne(user);
+            res.send({ status: "success" }).status(200);
+        } catch (error) {
+            console.error(error);
+            res.send({ status: "fail" }).status(500);
+        } finally {
+            dbo.closeConnection();
+        }
+    })();
+});
+
+app.post(`/${signUpNewUser}`, userModel.checkUsernameAlrExist, (req, res) => {
+    const { user } = req.body;
+    console.log(signUpNewUser, { user });
+    (async () => {
+        try {
+            const db = await dbo.connectToServer("audio-host");
+            await db.collection("users").insertOne(user);
             res.send({ status: "success" }).status(200);
         } catch (error) {
             console.error(error);
@@ -183,14 +201,14 @@ app.delete(`/${deleteUser}/:userID`, verifyToken, validateAdminUserRole, (req, r
     })();
 });
 
-app.put(`/${updateUser}/:userID`, verifyToken, validateAdminUserRole, (req, res) => {
+app.put(`/${updateUser}/:userID`, verifyToken, validateAdminUserRole, userModel.checkUsernameAlrExist, (req, res) => {
     const { userID } = req.params;
-    const updatedUserDetails = req.body;
-    console.log(updateUser, { userID, updatedUserDetails });
+    const { user } = req.body;
+    console.log(updateUser, { userID, user });
     (async () => {
         try {
             const db = await dbo.connectToServer("audio-host");
-            await db.collection("users").findOneAndUpdate({ userID }, { $set: updatedUserDetails }, { upsert: true });
+            await db.collection("users").findOneAndUpdate({ userID }, { $set: user }, { upsert: true });
             res.send({ status: "success" }).status(200);
         } catch (error) {
             console.error(error);

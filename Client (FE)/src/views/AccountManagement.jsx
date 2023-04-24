@@ -1,11 +1,12 @@
 import { Form, InputNumber, Popconfirm, Table, Input, Button, Space, message, Switch } from "antd";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getAllUsersList, addNewUser, deleteUser, updateUsers } from "../backendServices/userService";
-import { CustomCard } from "../components/styledComponents";
+import { CustomVerticalSpace, CustomModalWithButtonCom } from "../components/styledComponents";
 import { v4 as uuidv4 } from "uuid";
 
 export const AccountManagement = () => {
     const [data, setData] = useState([]);
+    const [showAddUser, setShowAddUser] = useState(false);
 
     const deleteRecord = async (record) => {
         const response = await deleteUser(record);
@@ -19,25 +20,33 @@ export const AccountManagement = () => {
     useEffect(() => {
         (async () => {
             const users = await getAllUsersList();
-            setData(users?.usersList?.map((user) => ({ ...user, key: user.userID })) ?? []);
             console.log("AccountManagement:::userList", users);
+            setData(users?.usersList?.map((user) => ({ ...user, key: user.userID })) ?? []);
         })();
     }, []);
 
     const appendNewRow = (newUser) => {
         setData((prev) => [...prev, { ...newUser, key: newUser.userID ?? prev.length }]);
+        setShowAddUser(false);
     };
 
     return (
         <>
             <h1>Accounts Management</h1>
+            <CustomModalWithButtonCom
+                state={showAddUser}
+                stateSetter={setShowAddUser}
+                title={"Add New User"}
+                btnText="Add User"
+            >
+                <NewAccountComp allUsers={data} addAccount={appendNewRow} />
+            </CustomModalWithButtonCom>
             <AccountManagementTable originData={data} onDelete={deleteRecord} updateUserData={setData} />
-            <NewAccountComp allUsers={data} addAccount={appendNewRow} />
         </>
     );
 };
 
-const NewAccountComp = ({ allUsers, addAccount }) => {
+export const NewAccountComp = ({ selfSignUp = false, addAccount }) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [role, setRole] = useState("user");
@@ -49,21 +58,13 @@ const NewAccountComp = ({ allUsers, addAccount }) => {
             message.error("Incomplete information for new user account");
             return;
         }
-        const usernameAlrExist = allUsers.some((user) => user.username === username);
-        if (usernameAlrExist) {
-            message.error("Username already exist, please choose another password");
-            usernameRef.current.focus();
-            setUsername("");
-            return;
-        }
-
         const userID = uuidv4();
         const newUser = { userID, username, password, role };
-        const response = await addNewUser({ newUser });
+        const response = await addNewUser({ newUser, selfSignUp });
         if (response.status === "fail") {
             message.error(response.statusMsg);
         } else {
-            addAccount(newUser);
+            addAccount && addAccount(newUser);
             message.success("Added new account");
         }
         setUsername("");
@@ -72,31 +73,33 @@ const NewAccountComp = ({ allUsers, addAccount }) => {
     };
 
     return (
-        <CustomCard title="Add New User">
-            <Space direction="vertical">
-                <Input
-                    ref={usernameRef}
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Username"
-                />
-                <Input.Password
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
-                    visibilityToggle
-                />
-                <Switch
-                    checked={role === "admin"}
-                    onChange={(checked) => setRole(checked ? "admin" : "user")}
-                    checkedChildren="Admin"
-                    unCheckedChildren="User"
-                />
-                <Button onClick={addNewAccount} disabled={!(username.length && password.length)}>
-                    Add User
-                </Button>
-            </Space>
-        </CustomCard>
+        // <CustomCard title={selfSignUp ? "Sign Up For Account" : "Add New User"}>
+        <CustomVerticalSpace>
+            <Input
+                ref={usernameRef}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Username"
+            />
+            <Input.Password
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                visibilityToggle
+            />
+            <Switch
+                disabled={selfSignUp}
+                checked={role === "admin"}
+                onChange={(checked) => setRole(checked ? "admin" : "user")}
+                checkedChildren="Admin"
+                unCheckedChildren="User"
+                style={{ width: 90 }}
+            />
+            <Button type="primary" onClick={addNewAccount} disabled={!(username.length && password.length)}>
+                {selfSignUp ? "Sign Up" : "Add User"}
+            </Button>
+        </CustomVerticalSpace>
+        // </CustomCard>
     );
 };
 
@@ -178,13 +181,13 @@ const AccountManagementTable = ({ originData, onDelete, updateUserData }) => {
             const row = await form.validateFields();
             row.role = roleLookup[row.role];
 
-            const usernameAlrExist = originData
-                .filter((record) => record.key !== key)
-                .some((record) => record.username === row.username);
-            if (usernameAlrExist) {
-                message.error("Username already exist, try another username");
-                return;
-            }
+            // const usernameAlrExist = originData
+            //     .filter((record) => record.key !== key)
+            //     .some((record) => record.username === row.username);
+            // if (usernameAlrExist) {
+            //     message.error("Username already exist, try another username");
+            //     return;
+            // }
 
             const originalRow = originData.find((record) => record.key === key);
             const updatedUserDetails = { ...originalRow, ...row };

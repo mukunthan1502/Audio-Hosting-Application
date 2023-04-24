@@ -49,17 +49,17 @@ export const getAllUsersList = (options = {}) => {
 
 export const addNewUser = (options = {}) => {
     return new Promise((resolve, reject) => {
-        const { newUser } = options;
+        const { newUser, selfSignUp = false } = options;
         const reqOptions = {
             method: "POST",
-            body: JSON.stringify({ newUser }),
+            body: JSON.stringify({ user: newUser }),
             headers: {
                 "Content-Type": "application/json",
                 authorization: "Bearer " + sessionStorage.getItem("authToken"),
             },
         };
-        const { addNewUser } = BackendEndpointURL;
-        const endpoint = constructBeEndpoint(addNewUser);
+        const { addNewUser, signUpNewUser } = BackendEndpointURL;
+        const endpoint = constructBeEndpoint(selfSignUp ? signUpNewUser : addNewUser);
 
         console.log("addNewUser:::endpoint", endpoint);
 
@@ -100,10 +100,11 @@ export const deleteUser = (options = {}) => {
 export const updateUsers = (options = {}) => {
     return new Promise((resolve, reject) => {
         const updatedUserDetails = options;
+        console.log("updatedUserDetails", updatedUserDetails);
         const { userID } = updatedUserDetails;
         const reqOptions = {
             method: "PUT",
-            body: JSON.stringify(updatedUserDetails),
+            body: JSON.stringify({ user: updatedUserDetails }),
             headers: {
                 "Content-Type": "application/json",
                 authorization: "Bearer " + sessionStorage.getItem("authToken"),
